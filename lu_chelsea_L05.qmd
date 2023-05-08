@@ -1,7 +1,7 @@
 ---
 title: "L05 Assessment Revisited"
 subtitle: "Data Science 3 with R (STAT 301-3)"
-author: "YOUR NAME"
+author: "Chelsea Lu"
 
 format:
   html:
@@ -16,13 +16,14 @@ execute:
 from: markdown+emoji 
 ---
 
+
 ::: {.callout-tip icon=false}
 
 ## Github Repo Link
 
 To link to your github **repo**sitory, appropriately edit the example link below. Meaning replace `https://your-github-repo-url` with your github repo url. Suggest verifying the link works before submitting.
 
-[https://your-github-repo-url](https://your-github-repo-url)
+[https://github.com/cchelsealu/L05-assessment-revisited-cchelsealu.git](https://github.com/cchelsealu/L05-assessment-revisited-cchelsealu.git)
 
 :::
 
@@ -41,12 +42,16 @@ When considering classification metric it is essential to understand the 4 essen
 ## Solution
 
 - **True positives (TP):**
+When the prediction accurately predicts the outcome of interest.
 
 - **True negatives (TN):**
+When the prediction accurately predicts the negative class.
 
 - **False positives (FP):**
+When the prediction inaccurately predicts the outcome of interest.
 
 - **False negatives (FN):**
+When the prediction inaccurately predicts the negative class.
 
 :::
 
@@ -59,12 +64,16 @@ Define each each of the terms and describe the consequence of each (what happens
 ## Solution
 
 - **True positives (TP):**
+We accurately predict an email to be spam, it is spam.
 
 - **True negatives (TN):**
+We accurately predict an email not to be spam, it is not spam. 
 
 - **False positives (FP):**
+We classify an email to be spam when it wasn't spam. 
 
 - **False negatives (FN):**
+We classify an email not to be spam when it was spam.
 
 :::
 
@@ -78,15 +87,21 @@ Describe each of the metrics in context of our example and indicate how to use t
 
 ## Solution
 
-- **Accuracy:**
+- **Accuracy:** 
+The ratio of accurately predicted emails to the total number of emails predicted. A higher accuracy value is better than a lower one
 
 - **Precision:**
+Determines how accurately the model predicted emails were spam. Of all the predictions to be labelled as spam (positive), which of those predictions were accurate (true positives). A higher precision value is better 
 
 - **Recall:**
+Determines that of all the emails that are actually spam, which emails were predicted to be spam. This is determined by finding the ratio of accurately predicted spam emails to accurately predicted spam emails and inaccurately predicted non-spam emails. A higher recall is better
+
 
 - **Sensitivity:**
+The same thing as recall but is the term used in medical settings 
 
 - **Specificity:**
+Determines that of all emails that are actually not spam, which emails were predicted to be be not spam. A higher specificity is better to avoid falsely categorizing emails as spam. 
 
 :::
 
@@ -97,7 +112,7 @@ Name one metric that you would use if you are trying to balance recall and preci
 ::: {.callout-tip icon=false}
 
 ## Solution
-
+You would use the F1 measure to balance recall and precision. Higher F1 score is better because the better it is at predicting performance, and the range is between 0 and 1 
 
 :::
 
@@ -157,12 +172,16 @@ knn_workflow <- workflow() %>%
   add_model(knn_model) %>%
   add_recipe(wildfires_recipe)
 
+# define metrics
+knn_metrics <- metric_set(precision, recall, sens, spec, f_meas)
+
 # Tuning/fitting ----
 knn_tune <- knn_workflow %>%
   tune_grid(
     resamples = wildfires_fold,
     grid = knn_grid,
-    control = keep_pred
+    control = keep_pred,
+    metrics = knn_metrics
   )
 
 # Write out results
@@ -176,6 +195,7 @@ There is some redundancy in the set of performance metrics we are using. What is
 ::: {.callout-tip icon=false}
 
 ## Solution
+Sensitivity is redundant because it is the same as recall. Sensitivity is just used in medical settings.
 
 :::
 
@@ -188,21 +208,11 @@ Name at least 2 other regression performance metrics and their functions in our 
 ::: {.callout-tip icon=false}
 
 ## Solution
+Adjusted r sqaure: adjR2() 
+You want the value to be high because there is a higher amount of variance explained. This function is similar to the R squared function. However, it also takes into account the amount of predictors to measure performance. If you have different number of predictors in two recipes, r squared will just think the recipe with the most predictors to be the most accurate. 
+
+ concordance correlation coefficient: ccc()
+ This metric takes into account the correlation and the difference between two continuous variables. It's a measure of bivariate correlation. The higher value the better, and it ranges from -1 to 1. 1 indicates most agreement between two variables.
 
 :::
-
-### Challenge
-**Not Required**
-
-It might be useful to have a baseline model for contextualizing and understanding if the models we are training are actually useful or an improvement. In many instances we are working on ML problems that do not have a known baseline or standard model to compare to so comparison to a null model is useful. Meaning the null model is a baseline model that we can use for comparison. Especially if we want to establish that models we are training are of any value (in terms of prediction). 
-
-In the code chunk below provide the code necessary to define a null model in our `tidymodels` framework (model, engine, formula, mode) for both a regression and classification problem.
-
-```{r}
-# define null model for regression ML
-
-
-# define null model for classification ML
-
-```
 
